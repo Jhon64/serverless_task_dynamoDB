@@ -1,0 +1,60 @@
+service: restaurant-serverless
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  memorySize: 512
+  timeout: 10
+  runtime: nodejs18.x
+  region: sa-east-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:sa-east-1:609523501850:table/TasksTable
+
+functions:
+  addTask:
+    handler: src/addTask.addTask
+    events:
+      - httpApi:
+          path: /task
+          method: post
+  listTask:
+    handler: src/listTask.listTask
+    events:
+      - httpApi:
+          path: /task
+          method: get
+resources:
+  Resources:
+    TasksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: TasksTable
+        BillingMode: PAY_PER_REQUEST #que nos cobre por perticion
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+    UsersRestaurant:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersRestaurant
+        BillingMode: PAY_PER_REQUEST #que nos cobre por perticion
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH

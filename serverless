@@ -1,0 +1,29 @@
+service: aws-node-http-api-project
+frameworkVersion: '3'
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: sa-east-1
+functions:
+  main:
+    handler: main.handler
+    memorySize: 512
+    tags:
+      Proyecto: "Serverless"
+    timeout: 180 # Máximo de segundos de ejecución de las funciones
+    events: # QUITAR LUEGO (SOLO PARA EL FUNCIONAMIENTO OFFLINE)
+      - httpApi:
+          path: /api/{uri}
+          method: GET
+      - httpApi:
+          path: /api/{uri}
+          method: POST
+      - httpApi:
+          path: /api/{uri}
+          method: PUT
+    url:
+      cors:
+        allowedHeaders: [ "*" ]
+        allowedMethods: [ "*" ]
+        allowedOrigins: [ "*" ]
+
